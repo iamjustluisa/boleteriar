@@ -1,0 +1,658 @@
+# Generado por k8s/generar.py: un Deployment y un Service por microservicio.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usuarios
+  labels: {app.kubernetes.io/name: usuarios, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: usuarios}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: usuarios, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: usuarios
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: usuarios}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios
+  labels: {app.kubernetes.io/name: usuarios, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: usuarios}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acceso
+  labels: {app.kubernetes.io/name: acceso, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: acceso}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: acceso, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: acceso
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: acceso}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acceso
+  labels: {app.kubernetes.io/name: acceso, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: acceso}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: escenarios
+  labels: {app.kubernetes.io/name: escenarios, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: escenarios}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: escenarios, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: escenarios
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: escenarios}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: escenarios
+  labels: {app.kubernetes.io/name: escenarios, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: escenarios}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventos
+  labels: {app.kubernetes.io/name: eventos, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: eventos}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: eventos, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: eventos
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: eventos}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eventos
+  labels: {app.kubernetes.io/name: eventos, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: eventos}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localidades
+  labels: {app.kubernetes.io/name: localidades, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: localidades}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: localidades, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: localidades
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: localidades}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: localidades
+  labels: {app.kubernetes.io/name: localidades, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: localidades}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asientos
+  labels: {app.kubernetes.io/name: asientos, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: asientos}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: asientos, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: asientos
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: asientos}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: asientos
+  labels: {app.kubernetes.io/name: asientos, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: asientos}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: disponibilidad
+  labels: {app.kubernetes.io/name: disponibilidad, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: disponibilidad}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: disponibilidad, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: disponibilidad
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: disponibilidad}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: disponibilidad
+  labels: {app.kubernetes.io/name: disponibilidad, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: disponibilidad}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservas
+  labels: {app.kubernetes.io/name: reservas, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: reservas}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: reservas, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: reservas
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: reservas}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reservas
+  labels: {app.kubernetes.io/name: reservas, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: reservas}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compras
+  labels: {app.kubernetes.io/name: compras, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: compras}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: compras, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: compras
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: compras}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compras
+  labels: {app.kubernetes.io/name: compras, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: compras}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pagos
+  labels: {app.kubernetes.io/name: pagos, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: pagos}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: pagos, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: pagos
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: pagos}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pagos
+  labels: {app.kubernetes.io/name: pagos, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: pagos}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: boletas
+  labels: {app.kubernetes.io/name: boletas, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: boletas}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: boletas, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: boletas
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: boletas}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: boletas
+  labels: {app.kubernetes.io/name: boletas, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: boletas}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificaciones
+  labels: {app.kubernetes.io/name: notificaciones, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: notificaciones}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: notificaciones, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: notificaciones
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: notificaciones}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notificaciones
+  labels: {app.kubernetes.io/name: notificaciones, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: notificaciones}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auditoria
+  labels: {app.kubernetes.io/name: auditoria, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: auditoria}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: auditoria, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: auditoria
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: auditoria}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auditoria
+  labels: {app.kubernetes.io/name: auditoria, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: auditoria}
+  ports:
+    - {name: http, port: 8000, targetPort: http}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analitica
+  labels: {app.kubernetes.io/name: analitica, app.kubernetes.io/part-of: boleteria}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app.kubernetes.io/name: analitica}
+  template:
+    metadata:
+      labels: {app.kubernetes.io/name: analitica, app.kubernetes.io/part-of: boleteria}
+    spec:
+      containers:
+        - name: analitica
+          image: boleteria-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - {name: SERVICIO, value: analitica}
+            - {name: PORT, value: "8000"}
+          envFrom:
+            - configMapRef: {name: boleteria-config}
+            - secretRef: {name: boleteria-secretos}
+          ports:
+            - {containerPort: 8000, name: http}
+          readinessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health, port: http}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests: {cpu: 50m, memory: 96Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analitica
+  labels: {app.kubernetes.io/name: analitica, app.kubernetes.io/part-of: boleteria}
+spec:
+  selector: {app.kubernetes.io/name: analitica}
+  ports:
+    - {name: http, port: 8000, targetPort: http}

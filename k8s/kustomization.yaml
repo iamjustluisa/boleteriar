@@ -1,0 +1,24 @@
+# Despliegue en Kubernetes (Sprint 6). Uso: ver k8s/README.md
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: boleteria
+resources:
+  - namespace.yaml
+  - mysql.yaml
+  - microservicios.yaml
+  - gateway.yaml
+configMapGenerator:
+  - name: boleteria-config
+    literals:
+      - SERVICE_URL_TEMPLATE=http://{nombre}:8000
+      - AUTO_CREATE_TABLES=true
+      - RESERVA_MINUTOS=10
+      - SESSION_MINUTES=120
+      - ANALITICA_ETL_MINUTOS=10
+      - TZ=America/Bogota
+secretGenerator:
+  - name: boleteria-secretos
+    envs:
+      - secretos.env
+generatorOptions:
+  disableNameSuffixHash: true

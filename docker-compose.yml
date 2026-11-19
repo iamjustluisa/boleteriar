@@ -1,0 +1,87 @@
+# Sistema de Gestión de Boletería · 13 microservicios + analítica (DW) + gateway + MySQL + Adminer
+#   docker compose up -d --build        → http://localhost:8080  (app)   ·  http://localhost:8081  (ver la BD)
+#   docker compose down -v               → borra todo, incluida la base de datos
+
+x-microservicio: &microservicio
+  build: .
+  image: boleteria-app:1.0
+  restart: unless-stopped
+  environment: &entorno
+    DATABASE_URL_TEMPLATE: "mysql+pymysql://boleteria:${MYSQL_PASSWORD:-boleteria_pass}@mysql:3306/{schema}?charset=utf8mb4"
+    SERVICE_URL_TEMPLATE: "http://{nombre}:8000"
+    INTERNAL_API_KEY: "${INTERNAL_API_KEY:-cambia-esta-clave-interna-en-el-env}"
+    AUTO_CREATE_TABLES: "true"           # las tablas ya las crea database/*.sql; esto es respaldo
+    RESERVA_MINUTOS: "${RESERVA_MINUTOS:-10}"
+    SESSION_MINUTES: "${SESSION_MINUTES:-120}"
+    TZ: America/Bogota
+  depends_on:
+    mysql:
+      condition: service_healthy
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: boleteria-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_pass}
+      MYSQL_USER: boleteria
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-boleteria_pass}
+      TZ: UTC
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports:
+      - "3306:3306"                       # para conectarse con MySQL Workbench
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d:ro   # DDL de los 13 esquemas (solo la primera vez)
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 20s
+
+  usuarios:       { <<: *microservicio, command: uvicorn usuarios.main:app --host 0.0.0.0 --port 8000 }
+  acceso:         { <<: *microservicio, command: uvicorn acceso.main:app --host 0.0.0.0 --port 8000 }
+  escenarios:     { <<: *microservicio, command: uvicorn escenarios.main:app --host 0.0.0.0 --port 8000 }
+  eventos:        { <<: *microservicio, command: uvicorn eventos.main:app --host 0.0.0.0 --port 8000 }
+  localidades:    { <<: *microservicio, command: uvicorn localidades.main:app --host 0.0.0.0 --port 8000 }
+  asientos:       { <<: *microservicio, command: uvicorn asientos.main:app --host 0.0.0.0 --port 8000 }
+  disponibilidad: { <<: *microservicio, command: uvicorn disponibilidad.main:app --host 0.0.0.0 --port 8000 }
+  reservas:       { <<: *microservicio, command: uvicorn reservas.main:app --host 0.0.0.0 --port 8000 }
+  compras:        { <<: *microservicio, command: uvicorn compras.main:app --host 0.0.0.0 --port 8000 }
+  pagos:          { <<: *microservicio, command: uvicorn pagos.main:app --host 0.0.0.0 --port 8000 }
+  boletas:        { <<: *microservicio, command: uvicorn boletas.main:app --host 0.0.0.0 --port 8000 }
+  notificaciones: { <<: *microservicio, command: uvicorn notificaciones.main:app --host 0.0.0.0 --port 8000 }
+  auditoria:      { <<: *microservicio, command: uvicorn auditoria.main:app --host 0.0.0.0 --port 8000 }
+  # Sprint 7: Data Warehouse (esquema_analitica), ETL programado e indicadores del dashboard
+  analitica:      { <<: *microservicio, command: uvicorn analitica.main:app --host 0.0.0.0 --port 8000 }
+
+  gateway:
+    <<: *microservicio
+    container_name: boleteria-gateway
+    command: uvicorn gateway.main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips=*
+    environment:
+      <<: *entorno
+      SEED_AL_INICIAR: "${SEED_AL_INICIAR:-true}"    # carga los datos de demostración la primera vez
+      ADMIN_CORREO: "${ADMIN_CORREO:-admin@boleteria.com}"
+      ADMIN_CONTRASENA: "${ADMIN_CONTRASENA:-Admin12345}"
+    ports:
+      - "8080:8000"
+    depends_on:
+      [mysql, usuarios, acceso, escenarios, eventos, localidades, asientos, disponibilidad,
+       reservas, compras, pagos, boletas, notificaciones, auditoria, analitica]
+
+  adminer:                                # interfaz web para ver la base de datos (servidor: mysql)
+    image: adminer:4
+    container_name: boleteria-adminer
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+      ADMINER_DESIGN: dracula
+    ports:
+      - "8081:8080"
+    depends_on: [mysql]
+
+volumes:
+  mysql_data:

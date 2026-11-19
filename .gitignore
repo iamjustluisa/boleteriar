@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.db
+logs/
+backups/*.sql
+.idea/
+k8s/secretos.env

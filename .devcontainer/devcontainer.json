@@ -1,0 +1,11 @@
+{
+  "name": "Boletería · 13 microservicios",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "forwardPorts": [8080, 8081],
+  "portsAttributes": {
+    "8080": { "label": "Boletería (aplicación web)", "onAutoForward": "openBrowser" },
+    "8081": { "label": "Adminer (ver la base de datos)", "onAutoForward": "notify" }
+  },
+  "postCreateCommand": "cp -n .env.example .env || true",
+  "postStartCommand": "docker compose up -d --build"
+}

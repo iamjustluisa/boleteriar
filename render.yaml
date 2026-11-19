@@ -1,0 +1,25 @@
+# Despliegue en Render (plan gratuito) en modo todo-en-uno: un solo contenedor con los 13
+# microservicios montados y la base de datos PostgreSQL en Neon (un schema por microservicio).
+# 1) Crea la base en https://neon.tech y copia la "connection string".
+# 2) En Render: New → Blueprint → elige este repositorio → pega la URL de Neon en DATABASE_URL_TEMPLATE.
+services:
+  - type: web
+    name: boleteria
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/estado
+    envVars:
+      - key: MODO_TODO_EN_UNO
+        value: "true"
+      - key: SERVICIO
+        value: gateway
+      - key: DATABASE_URL_TEMPLATE
+        sync: false
+      - key: INTERNAL_API_KEY
+        generateValue: true
+      - key: SEED_AL_INICIAR
+        value: "true"
+      - key: DB_POOL_SIZE
+        value: "1"
+      - key: DB_MAX_OVERFLOW
+        value: "3"
